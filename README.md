@@ -31,16 +31,13 @@
 
 ## 🚀 Installation
 
-     Prerequisites:
-     windows that can run .NET 9
-     .NET 9 (https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
-     
-     Installation:
-        Download and unzip release files. 
-        Run wowfishbot.exe to start the program
-
-
-
+1. Prerequisites:      
+       - Windows that can run .NET 9 (Some already have pre-installed)     
+       - .NET 9 (https://dotnet.microsoft.com/en-us/download/dotnet/9.0)            
+2. Installation:         
+       - Download and unzip release files.          
+       - Run wowfishbot.exe to start the program 
+  
 ## 💻 Preview
 ![Applicaion preview](images/preview.png)
 
