@@ -12,6 +12,9 @@
 
 [🐛 Report Bug](https://github.com/nanidev/wowfishbot/issues) · [✨ Request Feature](https://github.com/nanidev/wowfishbot/issues)
 
+
+[❤️ Donate](https://ko-fi.com/nanidev)
+
 </div>
 
 ---
@@ -26,7 +29,7 @@
 
 ## 🚀 Installation
 
-Download all release files and run wowfishbot.exe
+Download and unzip release files. Run wowfishbot.exe to start the program
 
 
 ## 💻 Preview
@@ -53,5 +56,7 @@ Contributions are what make the open-source community such an amazing place to l
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
+
+[![Donate](images/supp.png)](https://ko-fi.com/nanidev)
 
 <div align="center">Made with ❤️ by nanidev</div>
