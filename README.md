@@ -28,7 +28,7 @@ Download all release files and run wowfishbot.exe
 
 
 ## 💻 Preview
-![Applicaion preview](images/my-preview.png)
+![Applicaion preview](images/preview.png)
 
 ## ✨ Features
 
