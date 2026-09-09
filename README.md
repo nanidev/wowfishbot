@@ -4,6 +4,8 @@
 
 <p align="center">Very effective Fishing bot for World of Warcraft, by using sound detection and pixel recognition to automate fishing. Tested and working on wow version 1.12.1</p>
 
+[![](https://dcbadge.limes.pink/api/server/b94AzAJg8p)](https://discord.gg/b94AzAJg8p)
+
 [![Stars](https://img.shields.io/github/stars/nanidev/wowfishbot?style=flat-square)](https://github.com/nanidev/wowfishbot/stargazers) [![Forks](https://img.shields.io/github/forks/nanidev/wowfishbot?style=flat-square)](https://github.com/nanidev/wowfishbot/network) [![Issues](https://img.shields.io/github/issues/nanidev/wowfishbot?style=flat-square)](https://github.com/nanidev/wowfishbot/issues) [![Watchers](https://img.shields.io/github/watchers/nanidev/wowfishbot?style=flat-square)](https://github.com/nanidev/wowfishbot/watchers) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
 ![C#](https://img.shields.io/badge/-C%23-555?style=flat-square&logo=c%23)
