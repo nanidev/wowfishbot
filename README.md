@@ -19,6 +19,8 @@
 
 ---
 
+⚠️ IMPORTANT: This project, WowfishBot, is developed strictly for educational and research purposes. It is not intended for commercial use, and the user assumes all risk when utilizing it. Please use it responsibly and ethically.
+
 ## 📋 Table of Contents
 
 - [🚀 Installation](#installation)
@@ -29,7 +31,14 @@
 
 ## 🚀 Installation
 
-Download and unzip release files. Run wowfishbot.exe to start the program
+     Prerequisites:
+     windows that can run .NET 9
+     .NET 9 (https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+     
+     Installation:
+        Download and unzip release files. 
+        Run wowfishbot.exe to start the program
+
 
 
 ## 💻 Preview
