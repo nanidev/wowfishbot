@@ -2,7 +2,8 @@
 
 # wowfishbot
 
-<p align="center">Very effective Fishing bot for World of Warcraft, by using sound detection and pixel recognition to automate fishing. Tested and working on wow version 1.12.1</p>
+<p align="center">WoW Fish Bot is a configurable Windows desktop automation tool for World of Warcraft fishing. It combines sound-triggered catch detection, bobber recognition, and customizable timing controls to help streamline fishing in both classic and newer WoW versions. The app includes Interact With Target mode for modern clients, bobber pattern calibration, optional bobber validation, selectable search areas, pixel tolerance settings, custom cast and click inputs, and saved settings for repeat use. It also supports catch sound recording, built-in logs, optional UI hide/show hotkeys, and an emergency stop with ESC, making it a practical and easy-to-configure fishing assistant for players who want a reliable automated workflow.
+</p>
 
 [![](https://dcbadge.limes.pink/api/server/b94AzAJg8p)](https://discord.gg/b94AzAJg8p)
 
@@ -13,7 +14,7 @@
 [🐛 Report Bug](https://github.com/nanidev/wowfishbot/issues) · [✨ Request Feature](https://github.com/nanidev/wowfishbot/issues)
 
 
-[❤️ Donate](https://ko-fi.com/nanidev)
+### [❤️ Donate](https://ko-fi.com/nanidev)
 
 </div>
 
@@ -23,11 +24,69 @@
 
 ## 📋 Table of Contents
 
-- [🚀 Installation](#installation)
-- [💻 Usage](#usage)
 - [✨ Features](#features)
-- [🤝 Contributing](#contributing)
+- [📝 Latest Release](#latest-release)
+- [✅ Supported World of Warcraft Clients](#Supported-World-of-Warcraft-Clients)
+- [🚀 Installation](#installation)
+- [💻 Preview](#preview)
 - [📄 License](#license)
+
+
+## ✨ Features
+
+- ✅ **Sound-triggered automation**
+- ✅ **Support for newer WoW versions**
+- ✅ **Classic mode support**
+- ✅ **Interact With Target mode**
+- ✅ **Configurable cast, click, and performance delays**
+- ✅ **Bobber pattern calibration**
+- ✅ **Optional bobber validation**
+- ✅ **Selectable bobber search area**
+- ✅ **Pixel tolerance and match settings**
+- ✅ **Catch sound recording and playback**
+- ✅ **Window selection and process filtering**
+- ✅ **Custom cast key and click button support**
+- ✅ **Optional UI hide/show hotkey**
+- ✅ **Save and load settings**
+- ✅ **Built-in logs and status display**
+- ✅ **Emergency stop with `ESC`**
+
+
+## 📝 Latest Release
+
+### `v0.2` — Newer WoW Client Version Support
+
+This update adds support for newer WoW clients through **Interact With Target** mode.
+
+#### What changed
+- Added **Interact With Target** mode for newer WoW versions.
+- The configured cast key is used to cast and then used again after the catch sound to reel in.
+- Bobber scanning and mouse clicking are skipped in this mode.
+- Fixed a startup crash caused by a missing `Performance Delay` control.
+- Improved build reliability by updating generated designer files for nullable context handling.
+
+#### Important
+- Classic fishing mode still works as before.
+- If using a newer WoW client, enable **Interact With Target** in the app settings.
+
+For the full history, see the [GitHub Releases](https://github.com/nanidev/wowfishbot/releases) page.
+
+## ✅ Supported World of Warcraft Clients
+
+- ✅ **World of Warcraft 1.12.1** — Vanilla wow (Tested and working)
+- ⬜ **World of Warcraft 2.4.3** — The Burning Crusade
+- ⬜ **World of Warcraft 3.3.5a** — Wrath of the Lich King
+- ⬜ **World of Warcraft 4.3.4** — Cataclysm
+- ⬜ **World of Warcraft 5.4.8** — Mists of Pandaria
+- ⬜ **World of Warcraft 6.2.4** — Warlords of Draenor
+- ⬜ **World of Warcraft 7.3.5** — Legion
+- ⬜ **World of Warcraft 8.3.7** — Battle for Azeroth
+- ⬜ **World of Warcraft 9.2.7** — Shadowlands
+- ⬜ **World of Warcraft 10.2.7** — Dragonflight
+- ⬜ **World of Warcraft 11.x** — The War Within / current retail builds
+
+### Help Test Other Clients
+Only **1.12.1** has been confirmed so far. If you test the bot on any other client version, your feedback helps improve compatibility and expand support for more World of Warcraft versions.
 
 ## 🚀 Installation
 
@@ -41,21 +100,7 @@
 ## 💻 Preview
 ![Applicaion preview](images/preview.png)
 
-## ✨ Features
 
-- ✅ Automated Fishing
-- ✅ Fish catch using sound detection
-- ✅ Universal Bobber finder with pixel calibration
-
-## 🤝 Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## 📄 License
 
