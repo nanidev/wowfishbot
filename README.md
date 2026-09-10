@@ -24,7 +24,7 @@
 ## 📋 Table of Contents
 
 - [✨ Features](#features)
-- [📝 Latest Release](#latest-release)
+- [📝 Changelog](#changelog)
 - [✅ Supported World of Warcraft Clients](#Supported-World-of-Warcraft-Clients)
 - [📋 Prerequisites](#Prerequisites)
 - [🚀 Setup Guide](#Setup-Guide)
@@ -52,7 +52,30 @@
 - ✅ **Emergency stop with `ESC`**
 
 
-## 📝 Latest Release
+## 📝 Changelog
+
+### `v0.3` — Desktop Experience, Calibration, and Build Improvements
+
+This update improves reliability across different Windows and WoW setups while adding a more polished desktop experience.
+
+#### New features
+- Added a custom borderless title bar with minimize, maximize/restore, close, and window-resize support.
+- Added persistent window size, position, maximized state, and log visibility settings.
+- Added a compact layout option that hides the log panel for smaller screens.
+- Added a scrollable options panel so all bot settings remain accessible as groups expand.
+- Added a configurable performance delay to reduce unnecessary screen-capture and bobber-scan load.
+- Added an optional calibration mode that allows selecting any three pixels without requiring red and blue bobber colors.
+- Added a heart-shaped Ko-fi donate button to the title bar: [ko-fi.com/nanidev](https://ko-fi.com/nanidev).
+
+#### Improvements and fixes
+- Applied a cohesive dark-fantasy theme to the main window and calibration, area-selection, and key-capture dialogs.
+- Improved custom title-bar dragging, resize hit testing, and window-control accessibility.
+- Improved bobber calibration for DPI scaling and different Windows 11 display configurations.
+- Preserved saved RGB samples while allowing more flexible calibration pixel selection.
+- Improved startup and shutdown handling for persisted window and log-panel state.
+- Updated project metadata and build configuration for .NET 9.
+- Updated GitHub Actions builds to use Node.js 24 and .NET 9.
+- Added a framework-dependent single-file `win-x64` publish artifact for Windows deployments.
 
 ### `v0.2` — Newer WoW Client Version Support
 
