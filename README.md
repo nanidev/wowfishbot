@@ -54,6 +54,16 @@
 
 ## 📝 Changelog
 
+### `v0.3.1` — UI Frame and Form Polish
+
+This maintenance release refines the application window and secondary dialogs for a cleaner, more consistent appearance.
+
+#### Improvements
+- Added a thin light border around the main application window and secondary forms.
+- Applied the shared theme border color consistently across all forms.
+- Removed application icons from the main window, bobber calibration form, area-selection form, and key-combination capture form.
+- Preserved existing custom title-bar dragging, resizing, and dialog behavior.
+
 ### `v0.3` — Desktop Experience, Calibration, and Build Improvements
 
 This update improves reliability across different Windows and WoW setups while adding a more polished desktop experience.

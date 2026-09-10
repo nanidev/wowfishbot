@@ -174,6 +174,7 @@ partial class BobberCalibrationForm
         Controls.Add(instructionLabel);
         MinimumSize = new Size(720, 620);
         Name = "BobberCalibrationForm";
+        ShowIcon = false;
         StartPosition = FormStartPosition.CenterParent;
         Text = "Calibrate Bobber Pixels";
         imagePanel.ResumeLayout(false);

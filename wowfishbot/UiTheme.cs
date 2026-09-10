@@ -17,7 +17,7 @@ internal static class UiTheme
 
     public static void Apply(Form1 form)
     {
-        form.BackColor = ApplicationBackground;
+        ApplyFormFrame(form);
         ApplyContainer(form, form.Controls);
         ApplyButton(FindControl<Button>(form, "btnStart"), GoldAccent, Color.FromArgb(20, 29, 45));
         ApplyButton(FindControl<Button>(form, "btnStop"), Danger, Color.White);
@@ -46,8 +46,15 @@ internal static class UiTheme
 
     public static void ApplyDialog(Form form)
     {
-        form.BackColor = ApplicationBackground;
+        ApplyFormFrame(form);
         ApplyContainer(form, form.Controls);
+    }
+
+    private static void ApplyFormFrame(Form form)
+    {
+        form.BackColor = Border;
+        form.Padding = new Padding(1);
+        form.ShowIcon = false;
     }
 
     public static void ApplyAreaSelection(AreaSelectionForm form)

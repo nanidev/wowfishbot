@@ -146,6 +146,7 @@ public sealed partial class AreaSelectionForm
         FormBorderStyle = FormBorderStyle.Sizable;
         MinimumSize = new Size(700, 500);
         Name = "AreaSelectionForm";
+        ShowIcon = false;
         StartPosition = FormStartPosition.CenterParent;
         Text = "Select bobber search area";
         ((System.ComponentModel.ISupportInitialize)imageBox).EndInit();

@@ -98,6 +98,7 @@ public sealed partial class KeyCombinationCaptureForm
         KeyPreview = true;
         MinimumSize = new Size(520, 230);
         Name = "KeyCombinationCaptureForm";
+        ShowIcon = false;
         StartPosition = FormStartPosition.CenterParent;
         KeyDown += KeyCombinationCaptureForm_KeyDown;
         KeyUp += KeyCombinationCaptureForm_KeyUp;
