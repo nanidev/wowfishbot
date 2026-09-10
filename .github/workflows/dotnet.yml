@@ -71,7 +71,14 @@ jobs:
               });
             } catch (error) {
               if (error.status === 404) {
-                core.setFailed("Required release tag 'alpha' does not exist. Create it manually first.");
+                await github.rest.repos.createRelease({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag_name: "alpha",
+                  target_commitish: context.sha,
+                  name: "Alpha",
+                  prerelease: true
+                });
                 return;
               }
               throw error;
