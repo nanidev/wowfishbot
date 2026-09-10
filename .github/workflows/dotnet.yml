@@ -39,7 +39,17 @@ jobs:
 
       - name: Create ZIP archive
         shell: pwsh
-        run: Get-ChildItem -Path publish/win-x64 -Force -Recurse | Compress-Archive -DestinationPath publish/wowfishbot-win-x64.zip -Force
+        run: |
+          if (Test-Path publish/wowfishbot-win-x64.zip) {
+            Remove-Item publish/wowfishbot-win-x64.zip -Force
+          }
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::CreateFromDirectory(
+            "publish/win-x64",
+            "publish/wowfishbot-win-x64.zip",
+            [System.IO.Compression.CompressionLevel]::Optimal,
+            $false
+          )
 
       - name: Upload Windows executable
         uses: actions/upload-artifact@v4
