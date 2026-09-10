@@ -104,7 +104,7 @@ Only **1.12.1** has been confirmed so far. If you test the bot on any other clie
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the GPL-3.0 License. See `LICENSE` for more information.
 
 ---
 
