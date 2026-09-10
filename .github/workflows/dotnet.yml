@@ -22,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
@@ -58,11 +58,12 @@ jobs:
           name: wowfishbot-win-x64
           path: publish/win-x64
           if-no-files-found: error
-
-      - name: Publish release asset
+          
+      - name: Publish release
         if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          name: WoW Fish Bot ${{ github.ref_name }}
+          generate_release_notes: true
           files: publish/wowfishbot-win-x64.zip
