@@ -60,7 +60,11 @@ jobs:
                 tag: "alpha"
               });
             } catch (error) {
-              core.setFailed("Required release tag 'alpha' does not exist. Create it manually first.");
+              if (error.status === 404) {
+                core.setFailed("Required release tag 'alpha' does not exist. Create it manually first.");
+                return;
+              }
+              throw error;
             }
 
       - name: Publish release asset
