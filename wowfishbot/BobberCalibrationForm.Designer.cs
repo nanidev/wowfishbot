@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace wowfishbot;
 
 partial class BobberCalibrationForm
@@ -8,6 +10,7 @@ partial class BobberCalibrationForm
     private PictureBox imageBox = null!;
     private Panel footerPanel = null!;
     private Label selectionLabel = null!;
+    private CheckBox ignoreColorsCheckBox = null!;
     private Button undoButton = null!;
     private Button clearButton = null!;
     private Button confirmButton = null!;
@@ -15,18 +18,18 @@ partial class BobberCalibrationForm
 
     private void InitializeComponent()
     {
-        components = new System.ComponentModel.Container();
         instructionLabel = new Label();
         imagePanel = new Panel();
         imageBox = new PictureBox();
         footerPanel = new Panel();
-        selectionLabel = new Label();
-        undoButton = new Button();
-        clearButton = new Button();
-        confirmButton = new Button();
         cancelButton = new Button();
-        ((System.ComponentModel.ISupportInitialize)imageBox).BeginInit();
+        confirmButton = new Button();
+        clearButton = new Button();
+        undoButton = new Button();
+        ignoreColorsCheckBox = new CheckBox();
+        selectionLabel = new Label();
         imagePanel.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)imageBox).BeginInit();
         footerPanel.SuspendLayout();
         SuspendLayout();
         // 
@@ -52,6 +55,7 @@ partial class BobberCalibrationForm
         imagePanel.Location = new Point(0, 58);
         imagePanel.Name = "imagePanel";
         imagePanel.Padding = new Padding(12);
+        imagePanel.Size = new Size(820, 546);
         imagePanel.TabIndex = 1;
         // 
         // imageBox
@@ -73,47 +77,26 @@ partial class BobberCalibrationForm
         footerPanel.Controls.Add(confirmButton);
         footerPanel.Controls.Add(clearButton);
         footerPanel.Controls.Add(undoButton);
+        footerPanel.Controls.Add(ignoreColorsCheckBox);
         footerPanel.Controls.Add(selectionLabel);
         footerPanel.Dock = DockStyle.Bottom;
-        footerPanel.Location = new Point(0, 628);
+        footerPanel.Location = new Point(0, 604);
         footerPanel.Name = "footerPanel";
         footerPanel.Padding = new Padding(12, 10, 12, 10);
-        footerPanel.Size = new Size(820, 72);
+        footerPanel.Size = new Size(820, 96);
         footerPanel.TabIndex = 2;
         // 
-        // selectionLabel
+        // cancelButton
         // 
-        selectionLabel.Dock = DockStyle.Left;
-        selectionLabel.ForeColor = Color.FromArgb(51, 65, 85);
-        selectionLabel.Location = new Point(12, 10);
-        selectionLabel.Name = "selectionLabel";
-        selectionLabel.Size = new Size(390, 52);
-        selectionLabel.TabIndex = 0;
-        selectionLabel.TextAlign = ContentAlignment.MiddleLeft;
-        // 
-        // undoButton
-        // 
-        undoButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        undoButton.FlatStyle = FlatStyle.Flat;
-        undoButton.Location = new Point(412, 12);
-        undoButton.Name = "undoButton";
-        undoButton.Size = new Size(90, 38);
-        undoButton.TabIndex = 1;
-        undoButton.Text = "Undo";
-        undoButton.UseVisualStyleBackColor = true;
-        undoButton.Click += undoButton_Click;
-        // 
-        // clearButton
-        // 
-        clearButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        clearButton.FlatStyle = FlatStyle.Flat;
-        clearButton.Location = new Point(507, 12);
-        clearButton.Name = "clearButton";
-        clearButton.Size = new Size(90, 38);
-        clearButton.TabIndex = 2;
-        clearButton.Text = "Clear";
-        clearButton.UseVisualStyleBackColor = true;
-        clearButton.Click += clearButton_Click;
+        cancelButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cancelButton.DialogResult = DialogResult.Cancel;
+        cancelButton.FlatStyle = FlatStyle.Flat;
+        cancelButton.Location = new Point(707, 12);
+        cancelButton.Name = "cancelButton";
+        cancelButton.Size = new Size(100, 38);
+        cancelButton.TabIndex = 4;
+        cancelButton.Text = "Cancel";
+        cancelButton.UseVisualStyleBackColor = true;
         // 
         // confirmButton
         // 
@@ -131,17 +114,52 @@ partial class BobberCalibrationForm
         confirmButton.UseVisualStyleBackColor = false;
         confirmButton.Click += confirmButton_Click;
         // 
-        // cancelButton
+        // clearButton
         // 
-        cancelButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        cancelButton.DialogResult = DialogResult.Cancel;
-        cancelButton.FlatStyle = FlatStyle.Flat;
-        cancelButton.Location = new Point(707, 12);
-        cancelButton.Name = "cancelButton";
-        cancelButton.Size = new Size(100, 38);
-        cancelButton.TabIndex = 4;
-        cancelButton.Text = "Cancel";
-        cancelButton.UseVisualStyleBackColor = true;
+        clearButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        clearButton.FlatStyle = FlatStyle.Flat;
+        clearButton.Location = new Point(507, 12);
+        clearButton.Name = "clearButton";
+        clearButton.Size = new Size(90, 38);
+        clearButton.TabIndex = 2;
+        clearButton.Text = "Clear";
+        clearButton.UseVisualStyleBackColor = true;
+        clearButton.Click += clearButton_Click;
+        // 
+        // undoButton
+        // 
+        undoButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        undoButton.FlatStyle = FlatStyle.Flat;
+        undoButton.Location = new Point(412, 12);
+        undoButton.Name = "undoButton";
+        undoButton.Size = new Size(90, 38);
+        undoButton.TabIndex = 1;
+        undoButton.Text = "Undo";
+        undoButton.UseVisualStyleBackColor = true;
+        undoButton.Click += undoButton_Click;
+        // 
+        // ignoreColorsCheckBox
+        // 
+        ignoreColorsCheckBox.AccessibleDescription = "Allow any three stable pixels instead of requiring red and blue pixels";
+        ignoreColorsCheckBox.AccessibleName = "Ignore red and blue pixel colors";
+        ignoreColorsCheckBox.AutoSize = true;
+        ignoreColorsCheckBox.Location = new Point(12, 13);
+        ignoreColorsCheckBox.Name = "ignoreColorsCheckBox";
+        ignoreColorsCheckBox.Size = new Size(249, 19);
+        ignoreColorsCheckBox.TabIndex = 5;
+        ignoreColorsCheckBox.Text = "Select any 3 pixels (ignore red/blue colors)";
+        ignoreColorsCheckBox.UseVisualStyleBackColor = true;
+        ignoreColorsCheckBox.CheckedChanged += ignoreColorsCheckBox_CheckedChanged;
+        // 
+        // selectionLabel
+        // 
+        selectionLabel.Dock = DockStyle.Left;
+        selectionLabel.ForeColor = Color.FromArgb(51, 65, 85);
+        selectionLabel.Location = new Point(12, 10);
+        selectionLabel.Name = "selectionLabel";
+        selectionLabel.Size = new Size(390, 76);
+        selectionLabel.TabIndex = 0;
+        selectionLabel.TextAlign = ContentAlignment.MiddleLeft;
         // 
         // BobberCalibrationForm
         // 
@@ -154,14 +172,14 @@ partial class BobberCalibrationForm
         Controls.Add(imagePanel);
         Controls.Add(footerPanel);
         Controls.Add(instructionLabel);
-        FormBorderStyle = FormBorderStyle.Sizable;
         MinimumSize = new Size(720, 620);
         Name = "BobberCalibrationForm";
         StartPosition = FormStartPosition.CenterParent;
         Text = "Calibrate Bobber Pixels";
-        ((System.ComponentModel.ISupportInitialize)imageBox).EndInit();
         imagePanel.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)imageBox).EndInit();
         footerPanel.ResumeLayout(false);
+        footerPanel.PerformLayout();
         ResumeLayout(false);
     }
 

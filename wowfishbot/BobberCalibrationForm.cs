@@ -16,31 +16,49 @@ public sealed partial class BobberCalibrationForm : Form
     private Point anchorPoint;
     private Point clickOffset;
 
+    public bool IgnoreBobberPixelColors { get; private set; }
+
     public BobberCalibrationForm()
     {
         sourceBitmap = new Bitmap(1, 1);
         cursorLocalPoint = Point.Empty;
         InitializeComponent();
+        UiTheme.ApplyBobberCalibration(this);
         RefreshDisplay();
     }
 
     private void undoButton_Click(object? sender, EventArgs e) => UndoSelection();
 
-    public BobberCalibrationForm(Bitmap screenshot, Point screenshotOrigin, Point cursorScreenPoint)
+    public BobberCalibrationForm(Bitmap screenshot, Point screenshotOrigin, Point cursorScreenPoint, bool ignoreBobberPixelColors = false)
     {
         sourceBitmap = screenshot ?? throw new ArgumentNullException(nameof(screenshot));
         cursorLocalPoint = new Point(cursorScreenPoint.X - screenshotOrigin.X, cursorScreenPoint.Y - screenshotOrigin.Y);
         InitializeComponent();
+        UiTheme.ApplyBobberCalibration(this);
+        IgnoreBobberPixelColors = ignoreBobberPixelColors;
+        ignoreColorsCheckBox.Checked = ignoreBobberPixelColors;
         RefreshDisplay();
+    }
+
+    private void ignoreColorsCheckBox_CheckedChanged(object? sender, EventArgs e)
+    {
+        IgnoreBobberPixelColors = ignoreColorsCheckBox.Checked;
+        instructionLabel.Text = IgnoreBobberPixelColors
+            ? "Select any three stable pixels. Do not select the highlighted cursor pixel."
+            : "Select the red feather pixel first, the blue feather pixel second, and optionally one more stable pixel. Do not select the highlighted cursor pixel.";
+        ClearSelection();
     }
 
     private void clearButton_Click(object? sender, EventArgs e) => ClearSelection();
 
     private void confirmButton_Click(object? sender, EventArgs e)
     {
-        if (selectedPixels.Count < 2)
+        var requiredPixelCount = IgnoreBobberPixelColors ? 3 : 2;
+        if (selectedPixels.Count < requiredPixelCount)
         {
-            selectionLabel.Text = "Select the red and blue feather pixels before confirming.";
+            selectionLabel.Text = IgnoreBobberPixelColors
+                ? "Select three stable pixels before confirming."
+                : "Select the red and blue feather pixels before confirming.";
             return;
         }
 
@@ -70,11 +88,13 @@ public sealed partial class BobberCalibrationForm : Form
             return;
         }
 
-        var requiresRed = selectedPixels.Count == 0;
-        var requiresBlue = selectedPixels.Count == 1;
+        var requiresRed = !IgnoreBobberPixelColors && selectedPixels.Count == 0;
+        var requiresBlue = !IgnoreBobberPixelColors && selectedPixels.Count == 1;
         if (!TryFindSelectablePixel(clickedPoint.Value, requiresRed, requiresBlue, out var sourcePoint, out var color))
         {
-            selectionLabel.Text = requiresRed
+            selectionLabel.Text = IgnoreBobberPixelColors
+                ? "Select a different pixel."
+                : requiresRed
                 ? "Select a red feather pixel first."
                 : requiresBlue
                     ? "Select a blue feather pixel second."
@@ -140,7 +160,9 @@ public sealed partial class BobberCalibrationForm : Form
                 }
 
                 var distance = offsetX * offsetX + offsetY * offsetY;
-                var score = GetColorStrength(candidateColor, requiresRed) * 4 - distance;
+                var score = IgnoreBobberPixelColors
+                    ? -distance
+                    : GetColorStrength(candidateColor, requiresRed) * 4 - distance;
                 if (score <= bestScore)
                 {
                     continue;
@@ -217,12 +239,18 @@ public sealed partial class BobberCalibrationForm : Form
         imagePanel.AutoScrollMinSize = new Size(displayBitmap.Width + imagePanel.Padding.Horizontal, displayBitmap.Height + imagePanel.Padding.Vertical);
         undoButton.Enabled = selectedPixels.Count > 0;
         clearButton.Enabled = selectedPixels.Count > 0;
-        confirmButton.Enabled = selectedPixels.Count >= 2;
+        confirmButton.Enabled = selectedPixels.Count >= (IgnoreBobberPixelColors ? 3 : 2);
         selectionLabel.Text = selectedPixels.Count switch
         {
-            0 => "0 of 3 pixels selected — select the red feather pixel",
-            1 => "1 of 3 selected — now select the blue feather pixel",
-            2 => "2 pixels selected — optionally select a third, then save",
+            0 => IgnoreBobberPixelColors
+                ? "0 of 3 pixels selected — select any stable pixel"
+                : "0 of 3 pixels selected — select the red feather pixel",
+            1 => IgnoreBobberPixelColors
+                ? "1 of 3 pixels selected — select another stable pixel"
+                : "1 of 3 selected — now select the blue feather pixel",
+            2 => IgnoreBobberPixelColors
+                ? "2 of 3 pixels selected — select one more stable pixel"
+                : "2 pixels selected — optionally select a third, then save",
             _ => "3 pixels selected — pattern ready to save"
         };
     }

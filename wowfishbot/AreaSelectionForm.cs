@@ -18,6 +18,7 @@ public sealed partial class AreaSelectionForm : Form
     {
         sourceBitmap = screenshot ?? throw new ArgumentNullException(nameof(screenshot));
         InitializeComponent();
+        UiTheme.ApplyAreaSelection(this);
         imageBox.Image = sourceBitmap;
         imageBox.Size = sourceBitmap.Size;
         imagePanel.AutoScrollMinSize = new Size(sourceBitmap.Width + imagePanel.Padding.Horizontal, sourceBitmap.Height + imagePanel.Padding.Vertical);

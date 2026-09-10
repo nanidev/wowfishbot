@@ -5,8 +5,13 @@
         private System.ComponentModel.IContainer components = null;
         private Panel headerPanel;
         private Label lblTitle;
+        private Button btnDonate;
         private Label lblSubtitle;
         private Label lblStatus;
+        private FlowLayoutPanel titleBarControls;
+        private Button btnMinimize;
+        private Button btnMaximize;
+        private Button btnClose;
         private TableLayoutPanel mainLayout;
         private Panel leftScrollPanel;
         private TableLayoutPanel leftLayout;
@@ -66,7 +71,9 @@
         private RichTextBox txtLog;
         private Panel footerPanel;
         private Label lblFooter;
+        private LinkLabel lnkOfficialRepository;
         private Button btnSaveSettings;
+        private Button btnToggleLog;
         private Button btnStart;
         private Button btnStop;
         private ToolTip toolTip;
@@ -84,7 +91,12 @@
         {
             components = new System.ComponentModel.Container();
             headerPanel = new Panel();
+            titleBarControls = new FlowLayoutPanel();
             lblStatus = new Label();
+            btnMinimize = new Button();
+            btnMaximize = new Button();
+            btnClose = new Button();
+            btnDonate = new Button();
             lblSubtitle = new Label();
             lblTitle = new Label();
             mainLayout = new TableLayoutPanel();
@@ -147,10 +159,13 @@
             footerPanel = new Panel();
             btnStop = new Button();
             btnStart = new Button();
+            btnToggleLog = new Button();
             btnSaveSettings = new Button();
+            lnkOfficialRepository = new LinkLabel();
             lblFooter = new Label();
             toolTip = new ToolTip(components);
             headerPanel.SuspendLayout();
+            titleBarControls.SuspendLayout();
             mainLayout.SuspendLayout();
             leftScrollPanel.SuspendLayout();
             leftLayout.SuspendLayout();
@@ -176,15 +191,34 @@
             // headerPanel
             // 
             headerPanel.BackColor = Color.FromArgb(17, 24, 39);
-            headerPanel.Controls.Add(lblStatus);
+            headerPanel.Controls.Add(titleBarControls);
+            headerPanel.Controls.Add(btnDonate);
             headerPanel.Controls.Add(lblSubtitle);
             headerPanel.Controls.Add(lblTitle);
             headerPanel.Dock = DockStyle.Top;
             headerPanel.Location = new Point(0, 0);
             headerPanel.Name = "headerPanel";
             headerPanel.Padding = new Padding(22, 14, 22, 10);
-            headerPanel.Size = new Size(929, 84);
+            headerPanel.Size = new Size(945, 84);
             headerPanel.TabIndex = 2;
+            headerPanel.Paint += HeaderPanel_Paint;
+            // 
+            // titleBarControls
+            // 
+            titleBarControls.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            titleBarControls.AutoSize = true;
+            titleBarControls.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            titleBarControls.BackColor = Color.Transparent;
+            titleBarControls.Controls.Add(lblStatus);
+            titleBarControls.Controls.Add(btnMinimize);
+            titleBarControls.Controls.Add(btnMaximize);
+            titleBarControls.Controls.Add(btnClose);
+            titleBarControls.Location = new Point(591, 16);
+            titleBarControls.Margin = new Padding(0);
+            titleBarControls.Name = "titleBarControls";
+            titleBarControls.Size = new Size(332, 32);
+            titleBarControls.TabIndex = 3;
+            titleBarControls.WrapContents = false;
             // 
             // lblStatus
             // 
@@ -192,13 +226,80 @@
             lblStatus.BackColor = Color.FromArgb(30, 41, 59);
             lblStatus.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             lblStatus.ForeColor = Color.FromArgb(134, 239, 172);
-            lblStatus.Location = new Point(674, 23);
+            lblStatus.Location = new Point(0, 0);
+            lblStatus.Margin = new Padding(0, 0, 4, 0);
             lblStatus.Name = "lblStatus";
             lblStatus.Padding = new Padding(12, 7, 12, 0);
             lblStatus.Size = new Size(220, 32);
             lblStatus.TabIndex = 0;
             lblStatus.Text = "Ready";
             lblStatus.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnMinimize
+            // 
+            btnMinimize.AccessibleDescription = "Minimize the application window";
+            btnMinimize.AccessibleName = "Minimize";
+            btnMinimize.FlatAppearance.BorderSize = 0;
+            btnMinimize.FlatStyle = FlatStyle.Flat;
+            btnMinimize.Font = new Font("Segoe UI", 11F);
+            btnMinimize.ForeColor = Color.White;
+            btnMinimize.Location = new Point(224, 0);
+            btnMinimize.Margin = new Padding(0);
+            btnMinimize.Name = "btnMinimize";
+            btnMinimize.Size = new Size(36, 32);
+            btnMinimize.TabIndex = 0;
+            btnMinimize.Text = "—";
+            btnMinimize.UseVisualStyleBackColor = false;
+            btnMinimize.Click += btnMinimize_Click;
+            // 
+            // btnMaximize
+            // 
+            btnMaximize.AccessibleDescription = "Maximize the application window";
+            btnMaximize.AccessibleName = "Maximize";
+            btnMaximize.FlatAppearance.BorderSize = 0;
+            btnMaximize.FlatStyle = FlatStyle.Flat;
+            btnMaximize.Font = new Font("Segoe UI", 11F);
+            btnMaximize.ForeColor = Color.White;
+            btnMaximize.Location = new Point(260, 0);
+            btnMaximize.Margin = new Padding(0);
+            btnMaximize.Name = "btnMaximize";
+            btnMaximize.Size = new Size(36, 32);
+            btnMaximize.TabIndex = 1;
+            btnMaximize.Text = "□";
+            btnMaximize.UseVisualStyleBackColor = false;
+            btnMaximize.Click += btnMaximize_Click;
+            // 
+            // btnClose
+            // 
+            btnClose.AccessibleDescription = "Close the application";
+            btnClose.AccessibleName = "Close";
+            btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.Font = new Font("Segoe UI", 12F);
+            btnClose.ForeColor = Color.White;
+            btnClose.Location = new Point(296, 0);
+            btnClose.Margin = new Padding(0);
+            btnClose.Name = "btnClose";
+            btnClose.Size = new Size(36, 32);
+            btnClose.TabIndex = 2;
+            btnClose.Text = "×";
+            btnClose.UseVisualStyleBackColor = false;
+            btnClose.Click += btnClose_Click;
+            // 
+            // btnDonate
+            // 
+            btnDonate.AccessibleDescription = "Open the WoW Fish Bot donation page on Ko-fi";
+            btnDonate.AccessibleName = "Donate on Ko-fi";
+            btnDonate.FlatAppearance.BorderSize = 0;
+            btnDonate.FlatStyle = FlatStyle.Flat;
+            btnDonate.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnDonate.Location = new Point(170, 14);
+            btnDonate.Name = "btnDonate";
+            btnDonate.Size = new Size(94, 28);
+            btnDonate.TabIndex = 3;
+            btnDonate.Text = "♥ Donate";
+            btnDonate.UseVisualStyleBackColor = false;
+            btnDonate.Click += btnDonate_Click;
             // 
             // lblSubtitle
             // 
@@ -207,9 +308,9 @@
             lblSubtitle.ForeColor = Color.FromArgb(148, 163, 184);
             lblSubtitle.Location = new Point(24, 47);
             lblSubtitle.Name = "lblSubtitle";
-            lblSubtitle.Size = new Size(266, 15);
+            lblSubtitle.Size = new Size(188, 15);
             lblSubtitle.TabIndex = 1;
-            lblSubtitle.Text = "Classic 1.12.1  •  sound-triggered fishing assistant";
+            lblSubtitle.Text = "World of Warcraft fishing assistant";
             // 
             // lblTitle
             // 
@@ -218,9 +319,9 @@
             lblTitle.ForeColor = Color.FromArgb(241, 245, 249);
             lblTitle.Location = new Point(22, 10);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(167, 32);
+            lblTitle.Size = new Size(139, 32);
             lblTitle.TabIndex = 2;
-            lblTitle.Text = "WoW Fish Bot";
+            lblTitle.Text = "wowfishbot";
             // 
             // mainLayout
             // 
@@ -236,7 +337,7 @@
             mainLayout.Padding = new Padding(2);
             mainLayout.RowCount = 1;
             mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            mainLayout.Size = new Size(929, 521);
+            mainLayout.Size = new Size(945, 560);
             mainLayout.TabIndex = 0;
             // 
             // leftScrollPanel
@@ -247,7 +348,7 @@
             leftScrollPanel.Location = new Point(5, 5);
             leftScrollPanel.Name = "leftScrollPanel";
             leftScrollPanel.Padding = new Padding(0, 0, 8, 0);
-            leftScrollPanel.Size = new Size(494, 511);
+            leftScrollPanel.Size = new Size(503, 550);
             leftScrollPanel.TabIndex = 0;
             // 
             // leftLayout
@@ -266,7 +367,7 @@
             leftLayout.RowStyles.Add(new RowStyle());
             leftLayout.RowStyles.Add(new RowStyle());
             leftLayout.RowStyles.Add(new RowStyle());
-            leftLayout.Size = new Size(469, 685);
+            leftLayout.Size = new Size(478, 709);
             leftLayout.TabIndex = 0;
             // 
             // grpTarget
@@ -275,7 +376,7 @@
             grpTarget.Dock = DockStyle.Fill;
             grpTarget.Location = new Point(3, 3);
             grpTarget.Name = "grpTarget";
-            grpTarget.Size = new Size(463, 160);
+            grpTarget.Size = new Size(472, 160);
             grpTarget.TabIndex = 0;
             grpTarget.TabStop = false;
             grpTarget.Text = "WoW target and bobber pattern";
@@ -303,7 +404,7 @@
             targetLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
             targetLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             targetLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            targetLayout.Size = new Size(457, 138);
+            targetLayout.Size = new Size(466, 138);
             targetLayout.TabIndex = 0;
             // 
             // lblWindow
@@ -322,7 +423,7 @@
             cmbWindows.Location = new Point(119, 14);
             cmbWindows.Margin = new Padding(3, 2, 3, 2);
             cmbWindows.Name = "cmbWindows";
-            cmbWindows.Size = new Size(331, 23);
+            cmbWindows.Size = new Size(334, 23);
             cmbWindows.TabIndex = 0;
             // 
             // lblProcess
@@ -339,7 +440,7 @@
             txtProcessName.Location = new Point(119, 44);
             txtProcessName.Margin = new Padding(3, 2, 3, 2);
             txtProcessName.Name = "txtProcessName";
-            txtProcessName.Size = new Size(331, 23);
+            txtProcessName.Size = new Size(334, 23);
             txtProcessName.TabIndex = 1;
             // 
             // lblTitleFilter
@@ -356,7 +457,7 @@
             txtWindowTitle.Location = new Point(119, 74);
             txtWindowTitle.Margin = new Padding(3, 2, 3, 2);
             txtWindowTitle.Name = "txtWindowTitle";
-            txtWindowTitle.Size = new Size(331, 23);
+            txtWindowTitle.Size = new Size(334, 23);
             txtWindowTitle.TabIndex = 2;
             // 
             // btnRefreshWindows
@@ -379,8 +480,9 @@
             grpOptions.Controls.Add(optionsLayout);
             grpOptions.Dock = DockStyle.Fill;
             grpOptions.Location = new Point(3, 318);
+            grpOptions.MinimumSize = new Size(0, 388);
             grpOptions.Name = "grpOptions";
-            grpOptions.Size = new Size(463, 364);
+            grpOptions.Size = new Size(472, 388);
             grpOptions.TabIndex = 2;
             grpOptions.TabStop = false;
             grpOptions.Text = "Bot options";
@@ -426,7 +528,7 @@
             optionsLayout.Dock = DockStyle.Fill;
             optionsLayout.Location = new Point(3, 19);
             optionsLayout.Name = "optionsLayout";
-            optionsLayout.Padding = new Padding(10, 12, 10, 8);
+            optionsLayout.Padding = new Padding(10, 12, 10, 32);
             optionsLayout.RowCount = 11;
             optionsLayout.RowStyles.Add(new RowStyle());
             optionsLayout.RowStyles.Add(new RowStyle());
@@ -439,7 +541,7 @@
             optionsLayout.RowStyles.Add(new RowStyle());
             optionsLayout.RowStyles.Add(new RowStyle());
             optionsLayout.RowStyles.Add(new RowStyle());
-            optionsLayout.Size = new Size(457, 342);
+            optionsLayout.Size = new Size(466, 366);
             optionsLayout.TabIndex = 0;
             // 
             // lblBobberPatternInstructions
@@ -449,7 +551,7 @@
             lblBobberPatternInstructions.ForeColor = Color.FromArgb(100, 116, 139);
             lblBobberPatternInstructions.Location = new Point(13, 283);
             lblBobberPatternInstructions.Name = "lblBobberPatternInstructions";
-            lblBobberPatternInstructions.Size = new Size(431, 29);
+            lblBobberPatternInstructions.Size = new Size(440, 29);
             lblBobberPatternInstructions.TabIndex = 14;
             lblBobberPatternInstructions.Text = "Select WoW, place the cursor over the bobber, then select red + blue pixels.";
             lblBobberPatternInstructions.TextAlign = ContentAlignment.MiddleLeft;
@@ -462,7 +564,7 @@
             lblBobberPatternStatus.ForeColor = Color.FromArgb(30, 64, 175);
             lblBobberPatternStatus.Location = new Point(13, 254);
             lblBobberPatternStatus.Name = "lblBobberPatternStatus";
-            lblBobberPatternStatus.Size = new Size(212, 29);
+            lblBobberPatternStatus.Size = new Size(216, 29);
             lblBobberPatternStatus.TabIndex = 14;
             lblBobberPatternStatus.Text = "Pattern: not calibrated";
             lblBobberPatternStatus.TextAlign = ContentAlignment.MiddleLeft;
@@ -474,7 +576,7 @@
             lblCastKey.ForeColor = Color.FromArgb(71, 85, 105);
             lblCastKey.Location = new Point(13, 12);
             lblCastKey.Name = "lblCastKey";
-            lblCastKey.Size = new Size(125, 32);
+            lblCastKey.Size = new Size(127, 32);
             lblCastKey.TabIndex = 0;
             lblCastKey.Text = "Cast key";
             lblCastKey.TextAlign = ContentAlignment.MiddleLeft;
@@ -486,7 +588,7 @@
             lblClickButton.ForeColor = Color.FromArgb(71, 85, 105);
             lblClickButton.Location = new Point(13, 44);
             lblClickButton.Name = "lblClickButton";
-            lblClickButton.Size = new Size(125, 29);
+            lblClickButton.Size = new Size(127, 29);
             lblClickButton.TabIndex = 0;
             lblClickButton.Text = "Click button";
             lblClickButton.TextAlign = ContentAlignment.MiddleLeft;
@@ -498,7 +600,7 @@
             lblCastDelay.ForeColor = Color.FromArgb(71, 85, 105);
             lblCastDelay.Location = new Point(13, 73);
             lblCastDelay.Name = "lblCastDelay";
-            lblCastDelay.Size = new Size(125, 29);
+            lblCastDelay.Size = new Size(127, 29);
             lblCastDelay.TabIndex = 0;
             lblCastDelay.Text = "Cast delay (ms)";
             lblCastDelay.TextAlign = ContentAlignment.MiddleLeft;
@@ -508,9 +610,9 @@
             lblTimeout.AutoSize = true;
             lblTimeout.Dock = DockStyle.Fill;
             lblTimeout.ForeColor = Color.FromArgb(71, 85, 105);
-            lblTimeout.Location = new Point(231, 44);
+            lblTimeout.Location = new Point(235, 44);
             lblTimeout.Name = "lblTimeout";
-            lblTimeout.Size = new Size(125, 29);
+            lblTimeout.Size = new Size(127, 29);
             lblTimeout.TabIndex = 0;
             lblTimeout.Text = "Catch wait (s)";
             lblTimeout.TextAlign = ContentAlignment.MiddleLeft;
@@ -522,7 +624,7 @@
             lblClickDelay.ForeColor = Color.FromArgb(71, 85, 105);
             lblClickDelay.Location = new Point(13, 102);
             lblClickDelay.Name = "lblClickDelay";
-            lblClickDelay.Size = new Size(125, 30);
+            lblClickDelay.Size = new Size(127, 30);
             lblClickDelay.TabIndex = 0;
             lblClickDelay.Text = "Click delay (ms)";
             lblClickDelay.TextAlign = ContentAlignment.MiddleLeft;
@@ -532,9 +634,9 @@
             lblPerformanceDelay.AutoSize = true;
             lblPerformanceDelay.Dock = DockStyle.Fill;
             lblPerformanceDelay.ForeColor = Color.FromArgb(71, 85, 105);
-            lblPerformanceDelay.Location = new Point(231, 102);
+            lblPerformanceDelay.Location = new Point(235, 102);
             lblPerformanceDelay.Name = "lblPerformanceDelay";
-            lblPerformanceDelay.Size = new Size(125, 30);
+            lblPerformanceDelay.Size = new Size(127, 30);
             lblPerformanceDelay.TabIndex = 0;
             lblPerformanceDelay.Text = "Performance delay (ms)";
             lblPerformanceDelay.TextAlign = ContentAlignment.MiddleLeft;
@@ -544,9 +646,9 @@
             lblThreshold.AutoSize = true;
             lblThreshold.Dock = DockStyle.Fill;
             lblThreshold.ForeColor = Color.FromArgb(71, 85, 105);
-            lblThreshold.Location = new Point(231, 73);
+            lblThreshold.Location = new Point(235, 73);
             lblThreshold.Name = "lblThreshold";
-            lblThreshold.Size = new Size(125, 29);
+            lblThreshold.Size = new Size(127, 29);
             lblThreshold.TabIndex = 0;
             lblThreshold.Text = "Sound sensitivity";
             lblThreshold.TextAlign = ContentAlignment.MiddleLeft;
@@ -556,9 +658,9 @@
             optionsLayout.SetColumnSpan(btnRecordCastKey, 2);
             btnRecordCastKey.Dock = DockStyle.Fill;
             btnRecordCastKey.FlatStyle = FlatStyle.Flat;
-            btnRecordCastKey.Location = new Point(231, 15);
+            btnRecordCastKey.Location = new Point(235, 15);
             btnRecordCastKey.Name = "btnRecordCastKey";
-            btnRecordCastKey.Size = new Size(213, 26);
+            btnRecordCastKey.Size = new Size(218, 26);
             btnRecordCastKey.TabIndex = 0;
             btnRecordCastKey.Text = "Record cast key";
             btnRecordCastKey.UseVisualStyleBackColor = true;
@@ -568,9 +670,9 @@
             // 
             lblCastKeyValue.Dock = DockStyle.Fill;
             lblCastKeyValue.ForeColor = Color.FromArgb(30, 64, 175);
-            lblCastKeyValue.Location = new Point(144, 12);
+            lblCastKeyValue.Location = new Point(146, 12);
             lblCastKeyValue.Name = "lblCastKeyValue";
-            lblCastKeyValue.Size = new Size(81, 32);
+            lblCastKeyValue.Size = new Size(83, 32);
             lblCastKeyValue.TabIndex = 1;
             lblCastKeyValue.Text = "1";
             lblCastKeyValue.TextAlign = ContentAlignment.MiddleLeft;
@@ -579,50 +681,50 @@
             // 
             cmbClickButton.Dock = DockStyle.Fill;
             cmbClickButton.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbClickButton.Location = new Point(144, 46);
+            cmbClickButton.Location = new Point(146, 46);
             cmbClickButton.Margin = new Padding(3, 2, 3, 2);
             cmbClickButton.Name = "cmbClickButton";
-            cmbClickButton.Size = new Size(81, 23);
+            cmbClickButton.Size = new Size(83, 23);
             cmbClickButton.TabIndex = 1;
             // 
             // numCastDelay
             // 
             numCastDelay.Dock = DockStyle.Fill;
-            numCastDelay.Location = new Point(144, 76);
+            numCastDelay.Location = new Point(146, 76);
             numCastDelay.Name = "numCastDelay";
-            numCastDelay.Size = new Size(81, 23);
+            numCastDelay.Size = new Size(83, 23);
             numCastDelay.TabIndex = 2;
             // 
             // numTimeout
             // 
             numTimeout.Dock = DockStyle.Fill;
-            numTimeout.Location = new Point(362, 47);
+            numTimeout.Location = new Point(368, 47);
             numTimeout.Name = "numTimeout";
-            numTimeout.Size = new Size(82, 23);
+            numTimeout.Size = new Size(85, 23);
             numTimeout.TabIndex = 3;
             // 
             // numClickDelay
             // 
             numClickDelay.Dock = DockStyle.Fill;
-            numClickDelay.Location = new Point(144, 105);
+            numClickDelay.Location = new Point(146, 105);
             numClickDelay.Name = "numClickDelay";
-            numClickDelay.Size = new Size(81, 23);
+            numClickDelay.Size = new Size(83, 23);
             numClickDelay.TabIndex = 4;
             // 
             // numPerformanceDelay
             // 
             numPerformanceDelay.Dock = DockStyle.Fill;
-            numPerformanceDelay.Location = new Point(362, 105);
+            numPerformanceDelay.Location = new Point(368, 105);
             numPerformanceDelay.Name = "numPerformanceDelay";
-            numPerformanceDelay.Size = new Size(82, 23);
+            numPerformanceDelay.Size = new Size(85, 23);
             numPerformanceDelay.TabIndex = 6;
             // 
             // numThreshold
             // 
             numThreshold.Dock = DockStyle.Fill;
-            numThreshold.Location = new Point(362, 76);
+            numThreshold.Location = new Point(368, 76);
             numThreshold.Name = "numThreshold";
-            numThreshold.Size = new Size(82, 23);
+            numThreshold.Size = new Size(85, 23);
             numThreshold.TabIndex = 6;
             toolTip.SetToolTip(numThreshold, "Higher values reduce false positives but require a cleaner recording.");
             // 
@@ -636,7 +738,7 @@
             chkValidateBobber.ForeColor = Color.FromArgb(51, 65, 85);
             chkValidateBobber.Location = new Point(13, 315);
             chkValidateBobber.Name = "chkValidateBobber";
-            chkValidateBobber.Size = new Size(212, 23);
+            chkValidateBobber.Size = new Size(216, 23);
             chkValidateBobber.TabIndex = 6;
             chkValidateBobber.Text = "Recheck bobber before clicking";
             toolTip.SetToolTip(chkValidateBobber, "Rechecks the saved red/blue pixel pattern near the detected bobber before audio listening and clicking.");
@@ -647,7 +749,7 @@
             optionsLayout.SetColumnSpan(chkInteractMode, 2);
             chkInteractMode.Font = new Font("Segoe UI", 10F);
             chkInteractMode.ForeColor = Color.FromArgb(51, 65, 85);
-            chkInteractMode.Location = new Point(231, 315);
+            chkInteractMode.Location = new Point(235, 315);
             chkInteractMode.Name = "chkInteractMode";
             chkInteractMode.Size = new Size(200, 23);
             chkInteractMode.TabIndex = 15;
@@ -658,9 +760,9 @@
             // 
             btnRecordHideShowUiKey.Dock = DockStyle.Fill;
             btnRecordHideShowUiKey.FlatStyle = FlatStyle.Flat;
-            btnRecordHideShowUiKey.Location = new Point(144, 193);
+            btnRecordHideShowUiKey.Location = new Point(146, 193);
             btnRecordHideShowUiKey.Name = "btnRecordHideShowUiKey";
-            btnRecordHideShowUiKey.Size = new Size(81, 26);
+            btnRecordHideShowUiKey.Size = new Size(83, 26);
             btnRecordHideShowUiKey.TabIndex = 7;
             btnRecordHideShowUiKey.Text = "Record hide/show";
             btnRecordHideShowUiKey.UseVisualStyleBackColor = true;
@@ -672,10 +774,10 @@
             btnCalibrateBobberPattern.BackColor = Color.FromArgb(219, 234, 254);
             btnCalibrateBobberPattern.FlatAppearance.BorderSize = 0;
             btnCalibrateBobberPattern.FlatStyle = FlatStyle.Flat;
-            btnCalibrateBobberPattern.Location = new Point(231, 256);
+            btnCalibrateBobberPattern.Location = new Point(235, 256);
             btnCalibrateBobberPattern.Margin = new Padding(3, 2, 3, 2);
             btnCalibrateBobberPattern.Name = "btnCalibrateBobberPattern";
-            btnCalibrateBobberPattern.Size = new Size(125, 25);
+            btnCalibrateBobberPattern.Size = new Size(127, 25);
             btnCalibrateBobberPattern.TabIndex = 5;
             btnCalibrateBobberPattern.Text = "Calibrate pixel pattern (F8)";
             btnCalibrateBobberPattern.UseVisualStyleBackColor = false;
@@ -686,9 +788,9 @@
             optionsLayout.SetColumnSpan(lblHideShowUiKeyValue, 2);
             lblHideShowUiKeyValue.Dock = DockStyle.Fill;
             lblHideShowUiKeyValue.ForeColor = Color.FromArgb(30, 64, 175);
-            lblHideShowUiKeyValue.Location = new Point(231, 190);
+            lblHideShowUiKeyValue.Location = new Point(235, 190);
             lblHideShowUiKeyValue.Name = "lblHideShowUiKeyValue";
-            lblHideShowUiKeyValue.Size = new Size(213, 32);
+            lblHideShowUiKeyValue.Size = new Size(218, 32);
             lblHideShowUiKeyValue.TabIndex = 8;
             lblHideShowUiKeyValue.Text = "Not configured";
             lblHideShowUiKeyValue.TextAlign = ContentAlignment.MiddleLeft;
@@ -705,11 +807,11 @@
             // numPixelColorTolerance
             // 
             numPixelColorTolerance.Dock = DockStyle.Fill;
-            numPixelColorTolerance.Location = new Point(144, 135);
+            numPixelColorTolerance.Location = new Point(146, 135);
             numPixelColorTolerance.Maximum = new decimal(new int[] { 442, 0, 0, 0 });
             numPixelColorTolerance.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             numPixelColorTolerance.Name = "numPixelColorTolerance";
-            numPixelColorTolerance.Size = new Size(81, 23);
+            numPixelColorTolerance.Size = new Size(83, 23);
             numPixelColorTolerance.TabIndex = 9;
             numPixelColorTolerance.Value = new decimal(new int[] { 135, 0, 0, 0 });
             // 
@@ -725,16 +827,16 @@
             // numPixelNeighborhoodRadius
             // 
             numPixelNeighborhoodRadius.Dock = DockStyle.Fill;
-            numPixelNeighborhoodRadius.Location = new Point(362, 135);
+            numPixelNeighborhoodRadius.Location = new Point(368, 135);
             numPixelNeighborhoodRadius.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
             numPixelNeighborhoodRadius.Name = "numPixelNeighborhoodRadius";
-            numPixelNeighborhoodRadius.Size = new Size(82, 23);
+            numPixelNeighborhoodRadius.Size = new Size(85, 23);
             numPixelNeighborhoodRadius.TabIndex = 10;
             numPixelNeighborhoodRadius.Value = new decimal(new int[] { 3, 0, 0, 0 });
             // 
             // lblPixelNeighborhoodRadius
             // 
-            lblPixelNeighborhoodRadius.Location = new Point(231, 132);
+            lblPixelNeighborhoodRadius.Location = new Point(235, 132);
             lblPixelNeighborhoodRadius.Name = "lblPixelNeighborhoodRadius";
             lblPixelNeighborhoodRadius.Size = new Size(88, 23);
             lblPixelNeighborhoodRadius.TabIndex = 0;
@@ -743,10 +845,10 @@
             // numPixelMatchScore
             // 
             numPixelMatchScore.Dock = DockStyle.Fill;
-            numPixelMatchScore.Location = new Point(144, 164);
+            numPixelMatchScore.Location = new Point(146, 164);
             numPixelMatchScore.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numPixelMatchScore.Name = "numPixelMatchScore";
-            numPixelMatchScore.Size = new Size(81, 23);
+            numPixelMatchScore.Size = new Size(83, 23);
             numPixelMatchScore.TabIndex = 11;
             numPixelMatchScore.Value = new decimal(new int[] { 55, 0, 0, 0 });
             // 
@@ -763,9 +865,9 @@
             // 
             btnSelectBobberSearchArea.Dock = DockStyle.Fill;
             btnSelectBobberSearchArea.FlatStyle = FlatStyle.Flat;
-            btnSelectBobberSearchArea.Location = new Point(231, 225);
+            btnSelectBobberSearchArea.Location = new Point(235, 225);
             btnSelectBobberSearchArea.Name = "btnSelectBobberSearchArea";
-            btnSelectBobberSearchArea.Size = new Size(125, 26);
+            btnSelectBobberSearchArea.Size = new Size(127, 26);
             btnSelectBobberSearchArea.TabIndex = 12;
             btnSelectBobberSearchArea.Text = "Select area";
             btnSelectBobberSearchArea.UseVisualStyleBackColor = true;
@@ -778,7 +880,7 @@
             lblBobberSearchArea.ForeColor = Color.FromArgb(30, 64, 175);
             lblBobberSearchArea.Location = new Point(13, 222);
             lblBobberSearchArea.Name = "lblBobberSearchArea";
-            lblBobberSearchArea.Size = new Size(212, 32);
+            lblBobberSearchArea.Size = new Size(216, 32);
             lblBobberSearchArea.TabIndex = 13;
             lblBobberSearchArea.Text = "Search area: full client";
             lblBobberSearchArea.TextAlign = ContentAlignment.MiddleLeft;
@@ -789,7 +891,7 @@
             grpAudio.Dock = DockStyle.Fill;
             grpAudio.Location = new Point(3, 169);
             grpAudio.Name = "grpAudio";
-            grpAudio.Size = new Size(463, 143);
+            grpAudio.Size = new Size(472, 143);
             grpAudio.TabIndex = 1;
             grpAudio.TabStop = false;
             grpAudio.Text = "Catch sound";
@@ -816,7 +918,7 @@
             audioLayout.RowStyles.Add(new RowStyle());
             audioLayout.RowStyles.Add(new RowStyle());
             audioLayout.RowStyles.Add(new RowStyle());
-            audioLayout.Size = new Size(457, 121);
+            audioLayout.Size = new Size(466, 121);
             audioLayout.TabIndex = 0;
             // 
             // lblCatchSound
@@ -842,7 +944,7 @@
             btnBrowseSound.FlatStyle = FlatStyle.Flat;
             btnBrowseSound.Location = new Point(300, 15);
             btnBrowseSound.Name = "btnBrowseSound";
-            btnBrowseSound.Size = new Size(150, 24);
+            btnBrowseSound.Size = new Size(153, 24);
             btnBrowseSound.TabIndex = 1;
             btnBrowseSound.Text = "Browse";
             btnBrowseSound.Click += btnBrowseSound_Click;
@@ -875,7 +977,7 @@
             btnRecordSound.FlatStyle = FlatStyle.Flat;
             btnRecordSound.Location = new Point(300, 45);
             btnRecordSound.Name = "btnRecordSound";
-            btnRecordSound.Size = new Size(150, 28);
+            btnRecordSound.Size = new Size(153, 28);
             btnRecordSound.TabIndex = 3;
             btnRecordSound.Text = "Record";
             btnRecordSound.UseVisualStyleBackColor = false;
@@ -900,7 +1002,7 @@
             btnPlaySound.FlatStyle = FlatStyle.Flat;
             btnPlaySound.Location = new Point(300, 79);
             btnPlaySound.Name = "btnPlaySound";
-            btnPlaySound.Size = new Size(150, 31);
+            btnPlaySound.Size = new Size(153, 31);
             btnPlaySound.TabIndex = 5;
             btnPlaySound.Text = "Play";
             btnPlaySound.Click += btnPlaySound_Click;
@@ -909,9 +1011,9 @@
             // 
             grpLog.Controls.Add(txtLog);
             grpLog.Dock = DockStyle.Fill;
-            grpLog.Location = new Point(505, 5);
+            grpLog.Location = new Point(514, 5);
             grpLog.Name = "grpLog";
-            grpLog.Size = new Size(419, 511);
+            grpLog.Size = new Size(426, 550);
             grpLog.TabIndex = 1;
             grpLog.TabStop = false;
             grpLog.Text = "Activity log";
@@ -928,7 +1030,7 @@
             txtLog.Name = "txtLog";
             txtLog.ReadOnly = true;
             txtLog.ScrollBars = RichTextBoxScrollBars.Vertical;
-            txtLog.Size = new Size(413, 489);
+            txtLog.Size = new Size(420, 528);
             txtLog.TabIndex = 0;
             txtLog.Text = "";
             // 
@@ -937,13 +1039,15 @@
             footerPanel.BackColor = Color.FromArgb(226, 232, 240);
             footerPanel.Controls.Add(btnStop);
             footerPanel.Controls.Add(btnStart);
+            footerPanel.Controls.Add(btnToggleLog);
             footerPanel.Controls.Add(btnSaveSettings);
+            footerPanel.Controls.Add(lnkOfficialRepository);
             footerPanel.Controls.Add(lblFooter);
             footerPanel.Dock = DockStyle.Bottom;
-            footerPanel.Location = new Point(0, 605);
+            footerPanel.Location = new Point(0, 644);
             footerPanel.Name = "footerPanel";
             footerPanel.Padding = new Padding(18, 10, 18, 10);
-            footerPanel.Size = new Size(929, 56);
+            footerPanel.Size = new Size(945, 56);
             footerPanel.TabIndex = 1;
             // 
             // btnStop
@@ -954,7 +1058,7 @@
             btnStop.FlatAppearance.BorderSize = 0;
             btnStop.FlatStyle = FlatStyle.Flat;
             btnStop.ForeColor = Color.White;
-            btnStop.Location = new Point(805, 9);
+            btnStop.Location = new Point(821, 9);
             btnStop.Name = "btnStop";
             btnStop.Size = new Size(112, 36);
             btnStop.TabIndex = 0;
@@ -969,7 +1073,7 @@
             btnStart.FlatAppearance.BorderSize = 0;
             btnStart.FlatStyle = FlatStyle.Flat;
             btnStart.ForeColor = Color.White;
-            btnStart.Location = new Point(685, 9);
+            btnStart.Location = new Point(701, 9);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(112, 36);
             btnStart.TabIndex = 1;
@@ -977,19 +1081,50 @@
             btnStart.UseVisualStyleBackColor = false;
             btnStart.Click += btnStart_Click;
             // 
+            // btnToggleLog
+            // 
+            btnToggleLog.AccessibleDescription = "Hide the activity log and make the window narrower";
+            btnToggleLog.AccessibleName = "Hide activity log";
+            btnToggleLog.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnToggleLog.BackColor = Color.FromArgb(30, 41, 59);
+            btnToggleLog.FlatAppearance.BorderColor = Color.FromArgb(71, 85, 105);
+            btnToggleLog.FlatStyle = FlatStyle.Flat;
+            btnToggleLog.ForeColor = Color.FromArgb(226, 232, 240);
+            btnToggleLog.Location = new Point(445, 9);
+            btnToggleLog.Name = "btnToggleLog";
+            btnToggleLog.Size = new Size(120, 36);
+            btnToggleLog.TabIndex = 3;
+            btnToggleLog.Text = "Hide log";
+            btnToggleLog.UseVisualStyleBackColor = false;
+            btnToggleLog.Click += btnToggleLog_Click;
+            // 
             // btnSaveSettings
             // 
             btnSaveSettings.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSaveSettings.BackColor = Color.White;
             btnSaveSettings.FlatAppearance.BorderColor = Color.FromArgb(148, 163, 184);
             btnSaveSettings.FlatStyle = FlatStyle.Flat;
-            btnSaveSettings.Location = new Point(557, 9);
+            btnSaveSettings.Location = new Point(573, 9);
             btnSaveSettings.Name = "btnSaveSettings";
             btnSaveSettings.Size = new Size(120, 36);
             btnSaveSettings.TabIndex = 2;
             btnSaveSettings.Text = "Save settings";
             btnSaveSettings.UseVisualStyleBackColor = false;
             btnSaveSettings.Click += btnSaveSettings_Click;
+            // 
+            // lnkOfficialRepository
+            // 
+            lnkOfficialRepository.AccessibleDescription = "Open the official WoW Fish Bot project repository";
+            lnkOfficialRepository.AccessibleName = "Official project repository";
+            lnkOfficialRepository.AutoSize = true;
+            lnkOfficialRepository.LinkColor = Color.FromArgb(37, 99, 235);
+            lnkOfficialRepository.Location = new Point(126, 20);
+            lnkOfficialRepository.Name = "lnkOfficialRepository";
+            lnkOfficialRepository.Size = new Size(267, 15);
+            lnkOfficialRepository.TabIndex = 4;
+            lnkOfficialRepository.TabStop = true;
+            lnkOfficialRepository.Text = "Official project: github.com/nanidev/wowfishbot";
+            lnkOfficialRepository.LinkClicked += lnkOfficialRepository_LinkClicked;
             // 
             // lblFooter
             // 
@@ -1006,19 +1141,21 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(241, 245, 249);
-            ClientSize = new Size(929, 661);
+            ClientSize = new Size(945, 700);
             Controls.Add(mainLayout);
             Controls.Add(footerPanel);
             Controls.Add(headerPanel);
             Font = new Font("Segoe UI", 9F);
+            FormBorderStyle = FormBorderStyle.None;
             KeyPreview = true;
             MinimumSize = new Size(945, 700);
             Name = "Form1";
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "WoW Fish Bot — Classic 1.12.1";
+            Text = "wowfishbot";
             headerPanel.ResumeLayout(false);
             headerPanel.PerformLayout();
+            titleBarControls.ResumeLayout(false);
             mainLayout.ResumeLayout(false);
             leftScrollPanel.ResumeLayout(false);
             leftScrollPanel.PerformLayout();

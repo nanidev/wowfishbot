@@ -16,6 +16,7 @@ public sealed partial class KeyCombinationCaptureForm : Form
         this.allowModifiers = allowModifiers;
         capturedCombination = initialCombination ?? Keys.None;
         InitializeComponent();
+        UiTheme.ApplyKeyCombinationCapture(this);
         Text = title;
         instructionLabel.Text = instruction;
         UpdateDisplay();

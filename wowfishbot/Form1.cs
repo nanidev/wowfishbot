@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using wowfishbot.Models;
@@ -9,12 +10,31 @@ namespace wowfishbot;
 
 public partial class Form1 : Form
 {
+    private const string KoFiDonationUrl = "https://ko-fi.com/nanidev";
     private const int CaptureHotKeyId = 0x4F31;
     private const int WmHotKey = 0x0312;
     private const int WhKeyboardLl = 13;
     private const int WmKeyDown = 0x0100;
     private const int WmSysKeyDown = 0x0104;
     private const int VirtualKeyEscape = 0x1B;
+    private const int WmNcHitTest = 0x0084;
+    private const int WmNclButtonDown = 0x00A1;
+    private const int WmNcLButtonDblClk = 0x00A3;
+    private const int WmSetCursor = 0x0020;
+    private const int WsThickFrame = 0x00040000;
+    private const int WsMinimizeBox = 0x00020000;
+    private const int WsMaximizeBox = 0x00010000;
+    private const int HtClient = 1;
+    private const int HtCaption = 2;
+    private const int HtLeft = 10;
+    private const int HtRight = 11;
+    private const int HtTop = 12;
+    private const int HtTopLeft = 13;
+    private const int HtTopRight = 14;
+    private const int HtBottom = 15;
+    private const int HtBottomLeft = 16;
+    private const int HtBottomRight = 17;
+    private const int ResizeBorder = 8;
 
     private readonly SettingsStore settingsStore = new();
     private readonly WowWindowService windowService = new();
@@ -33,21 +53,156 @@ public partial class Form1 : Form
     private readonly LowLevelKeyboardProc keyboardHookProc;
     private IntPtr keyboardHook;
     private bool globalEscapeActionPending;
+    private bool logCollapsed;
+    private int? expandedWindowWidth;
+
+    private const float ExpandedOptionsColumnPercent = 54.10628F;
+    private const float ExpandedLogColumnPercent = 45.8937225F;
+    private static readonly Size ExpandedMinimumSize = new(945, 700);
+    private static readonly Size CollapsedMinimumSize = new(620, 700);
+
+    protected override CreateParams CreateParams
+    {
+        get
+        {
+            var parameters = base.CreateParams;
+            parameters.Style |= WsThickFrame | WsMinimizeBox | WsMaximizeBox;
+            return parameters;
+        }
+    }
 
     public Form1()
     {
         keyboardHookProc = KeyboardHookCallback;
         InitializeComponent();
+        UiTheme.Apply(this);
         ConfigureRuntimeControls();
         bobberLocator = new BobberLocator(windowService);
         settings = settingsStore.Load();
+        RestoreWindowLayout();
+
+        if (!AttributionVerifier.HasExpectedIdentity())
+        {
+            lblStatus.Text = ProjectIdentity.IdentityWarning;
+        }
 
         cmbClickButton.DataSource = Enum.GetValues<MouseButton>();
         ApplySettingsToUi();
+        ApplyLogState(settings.LogCollapsed, false);
         KeyPreview = true;
         KeyDown += Form1_KeyDown;
         Shown += Form1_Shown;
         FormClosing += Form1_FormClosing;
+        Resize += Form1_Resize;
+        titleBarControls.BringToFront();
+        UpdateMaximizeButton();
+        headerPanel.MouseDown += TitleBar_MouseDown;
+        lblTitle.MouseDown += TitleBar_MouseDown;
+        lblSubtitle.MouseDown += TitleBar_MouseDown;
+        headerPanel.DoubleClick += TitleBar_DoubleClick;
+        lblTitle.DoubleClick += TitleBar_DoubleClick;
+        lblSubtitle.DoubleClick += TitleBar_DoubleClick;
+    }
+
+    private void RestoreWindowLayout()
+    {
+        var minimumSize = settings.LogCollapsed ? CollapsedMinimumSize : ExpandedMinimumSize;
+        MinimumSize = minimumSize;
+        var minimumWidth = minimumSize.Width;
+        var minimumHeight = minimumSize.Height;
+        var savedWidth = settings.WindowWidth;
+        if (settings.LogCollapsed && savedWidth == ExpandedMinimumSize.Width)
+        {
+            savedWidth = CollapsedMinimumSize.Width;
+        }
+
+        var width = Math.Max(savedWidth, minimumWidth);
+        var height = Math.Max(settings.WindowHeight, minimumHeight);
+        var bounds = new Rectangle(settings.WindowX, settings.WindowY, width, height);
+
+        var hasSavedPosition = settings.WindowWidth > 0 && settings.WindowHeight > 0 &&
+            !(settings.WindowX == -1 && settings.WindowY == -1);
+        if (!hasSavedPosition || !IsVisibleOnScreen(bounds))
+        {
+            var workingArea = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1280, 720);
+            bounds.Location = new Point(
+                workingArea.Left + Math.Max(0, (workingArea.Width - width) / 2),
+                workingArea.Top + Math.Max(0, (workingArea.Height - height) / 2));
+        }
+
+        StartPosition = FormStartPosition.Manual;
+        Bounds = bounds;
+        if (settings.WindowMaximized)
+        {
+            WindowState = FormWindowState.Maximized;
+        }
+    }
+
+    private static bool IsVisibleOnScreen(Rectangle bounds)
+        => Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(bounds));
+
+    private void SaveWindowLayout()
+    {
+        var normalBounds = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;
+        var minimumSize = logCollapsed ? CollapsedMinimumSize : ExpandedMinimumSize;
+        settings.WindowWidth = Math.Max(normalBounds.Width, minimumSize.Width);
+        settings.WindowHeight = Math.Max(normalBounds.Height, minimumSize.Height);
+        settings.WindowX = normalBounds.X;
+        settings.WindowY = normalBounds.Y;
+        settings.WindowMaximized = WindowState == FormWindowState.Maximized;
+        settings.LogCollapsed = logCollapsed;
+        expandedWindowWidth = null;
+    }
+
+    private void Form1_Resize(object? sender, EventArgs e)
+    {
+        UpdateMaximizeButton();
+    }
+
+    private void btnToggleLog_Click(object? sender, EventArgs e)
+    {
+        ApplyLogState(!logCollapsed, true);
+    }
+
+    private void ApplyLogState(bool collapsed, bool preserveExpandedWidth)
+    {
+        logCollapsed = collapsed;
+        settings.LogCollapsed = collapsed;
+
+        var previousMinimumSize = MinimumSize;
+        MinimumSize = logCollapsed ? CollapsedMinimumSize : ExpandedMinimumSize;
+        lnkOfficialRepository.Visible = !logCollapsed;
+
+        if (logCollapsed && preserveExpandedWidth && WindowState == FormWindowState.Normal)
+        {
+            expandedWindowWidth = Width;
+            Width = MinimumSize.Width;
+        }
+        else if (!logCollapsed && preserveExpandedWidth && WindowState == FormWindowState.Normal && expandedWindowWidth is int width)
+        {
+            Width = Math.Max(width, MinimumSize.Width);
+            expandedWindowWidth = null;
+        }
+
+        if (!logCollapsed && previousMinimumSize.Width < ExpandedMinimumSize.Width && Width < ExpandedMinimumSize.Width)
+        {
+            Width = ExpandedMinimumSize.Width;
+        }
+
+        grpLog.Visible = !logCollapsed;
+
+        mainLayout.ColumnStyles[0].SizeType = SizeType.Percent;
+        mainLayout.ColumnStyles[1].SizeType = SizeType.Percent;
+        mainLayout.ColumnStyles[0].Width = logCollapsed ? 100F : ExpandedOptionsColumnPercent;
+        mainLayout.ColumnStyles[1].Width = logCollapsed ? 0F : ExpandedLogColumnPercent;
+        mainLayout.PerformLayout();
+
+        btnToggleLog.Text = logCollapsed ? "Show log" : "Hide log";
+        btnToggleLog.AccessibleName = logCollapsed ? "Show activity log" : "Hide activity log";
+        btnToggleLog.AccessibleDescription = logCollapsed
+            ? "Show the activity log"
+            : "Hide the activity log and make the window narrower";
+        toolTip.SetToolTip(btnToggleLog, btnToggleLog.AccessibleDescription);
     }
 
     private void ConfigureRuntimeControls()
@@ -65,7 +220,7 @@ public partial class Form1 : Form
 
         toolTip.SetToolTip(numTimeout, "How long to listen for a catch after each bobber is found. This is independent of recording duration.");
         toolTip.SetToolTip(numThreshold, "Normalized match threshold from 0.10 to 0.99. Start around 0.55 to 0.75 and use the log diagnostics to tune it.");
-        toolTip.SetToolTip(btnCalibrateBobberPattern, "Capture a bobber screenshot and select the red feather first, the blue feather second, and optionally a third stable pixel. The original cursor pixel is excluded because hovering changes its color.");
+        toolTip.SetToolTip(btnCalibrateBobberPattern, "Capture a bobber screenshot and select red/blue pixels, or enable any-color mode to select three stable pixels. The original cursor pixel is excluded because hovering changes its color.");
         toolTip.SetToolTip(lblBobberPatternStatus, "The detector matches the selected pixels by relative position and searches nearby locations and small scale variations to tolerate bobber jiggle.");
         toolTip.SetToolTip(chkValidateBobber, "Rechecks the saved pixel pattern near the detected bobber before clicking.");
         toolTip.SetToolTip(chkInteractMode, "For newer WoW versions: use the configured cast key as the Interact With Target key. The key is pressed to cast and again after the catch sound to reel in; bobber scanning and mouse clicking are skipped.");
@@ -85,6 +240,24 @@ public partial class Form1 : Form
         toolTip.SetToolTip(btnSelectBobberSearchArea, "Limit bobber detection to a rectangle selected from the WoW client.");
         toolTip.SetToolTip(txtSoundPath, "WAV recording of the catch sound used by the audio matcher.");
         toolTip.SetToolTip(numRecordSeconds, "Length of the catch-sound recording. Cast once during recording.");
+        toolTip.SetToolTip(lnkOfficialRepository, ProjectIdentity.RepositoryUrl);
+        toolTip.SetToolTip(btnDonate, "Support WoW Fish Bot on Ko-fi");
+    }
+
+    private void btnDonate_Click(object? sender, EventArgs e)
+    {
+        Process.Start(new ProcessStartInfo(KoFiDonationUrl)
+        {
+            UseShellExecute = true
+        });
+    }
+
+    private void lnkOfficialRepository_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo(ProjectIdentity.RepositoryUrl)
+        {
+            UseShellExecute = true
+        });
     }
 
     private void btnRecordCastKey_Click(object? sender, EventArgs e)
@@ -231,7 +404,136 @@ public partial class Form1 : Form
             }
         }
 
+        if (message.Msg == WmNcHitTest)
+        {
+            var hitTest = HitTestWindow(message.LParam);
+            if (hitTest != HtClient)
+            {
+                message.Result = (IntPtr)hitTest;
+                return;
+            }
+        }
+
+        if (message.Msg == WmNcLButtonDblClk && IsTitleBarPoint(message.LParam))
+        {
+            ToggleMaximize();
+            return;
+        }
+
+        if (message.Msg == WmSetCursor && TryGetResizeCursor(message.LParam, out var resizeCursor))
+        {
+            Cursor.Current = resizeCursor;
+            message.Result = (IntPtr)1;
+            return;
+        }
+
         base.WndProc(ref message);
+    }
+
+    private bool TryGetResizeCursor(IntPtr lParam, out Cursor cursor)
+    {
+        cursor = Cursors.Default;
+        if (WindowState != FormWindowState.Normal)
+        {
+            return false;
+        }
+
+        var hitTest = unchecked((int)(lParam.ToInt64() & 0xFFFF));
+        cursor = hitTest switch
+        {
+            HtTop or HtBottom => Cursors.SizeNS,
+            HtLeft or HtRight => Cursors.SizeWE,
+            HtTopLeft or HtBottomRight => Cursors.SizeNWSE,
+            HtTopRight or HtBottomLeft => Cursors.SizeNESW,
+            _ => Cursors.Default
+        };
+
+        return cursor != Cursors.Default;
+    }
+
+    private int HitTestWindow(IntPtr lParam)
+    {
+        var screenPoint = new Point((short)(long)lParam, (short)((long)lParam >> 16));
+        var clientPoint = PointToClient(screenPoint);
+        var resizeLeft = clientPoint.X <= ResizeBorder;
+        var resizeRight = clientPoint.X >= ClientSize.Width - ResizeBorder;
+        var resizeTop = clientPoint.Y <= ResizeBorder;
+        var resizeBottom = clientPoint.Y >= ClientSize.Height - ResizeBorder;
+
+        if (WindowState == FormWindowState.Normal)
+        {
+            if (resizeTop && resizeLeft) return HtTopLeft;
+            if (resizeTop && resizeRight) return HtTopRight;
+            if (resizeBottom && resizeLeft) return HtBottomLeft;
+            if (resizeBottom && resizeRight) return HtBottomRight;
+            if (resizeLeft) return HtLeft;
+            if (resizeRight) return HtRight;
+            if (resizeTop) return HtTop;
+            if (resizeBottom) return HtBottom;
+        }
+
+        return IsTitleBarPoint(lParam) ? HtCaption : HtClient;
+    }
+
+    private bool IsTitleBarPoint(IntPtr lParam)
+    {
+        var screenPoint = new Point((short)(long)lParam, (short)((long)lParam >> 16));
+        var clientPoint = PointToClient(screenPoint);
+        return headerPanel.ClientRectangle.Contains(headerPanel.PointToClient(screenPoint)) &&
+            !titleBarControls.Bounds.Contains(headerPanel.PointToClient(screenPoint)) &&
+            !btnDonate.Bounds.Contains(headerPanel.PointToClient(screenPoint)) &&
+            !lblStatus.Bounds.Contains(headerPanel.PointToClient(screenPoint));
+    }
+
+    private void ToggleMaximize()
+    {
+        WindowState = WindowState == FormWindowState.Maximized
+            ? FormWindowState.Normal
+            : FormWindowState.Maximized;
+        UpdateMaximizeButton();
+    }
+
+    private void UpdateMaximizeButton()
+    {
+        if (btnMaximize is null)
+        {
+            return;
+        }
+
+        var maximized = WindowState == FormWindowState.Maximized;
+        btnMaximize.Text = maximized ? "❐" : "□";
+        btnMaximize.AccessibleName = maximized ? "Restore" : "Maximize";
+        btnMaximize.AccessibleDescription = maximized
+            ? "Restore the application window"
+            : "Maximize the application window";
+        toolTip?.SetToolTip(btnMinimize, "Minimize");
+        toolTip?.SetToolTip(btnMaximize, btnMaximize.AccessibleName);
+        toolTip?.SetToolTip(btnClose, "Close");
+    }
+
+    private void btnMinimize_Click(object? sender, EventArgs e) => WindowState = FormWindowState.Minimized;
+
+    private void btnMaximize_Click(object? sender, EventArgs e) => ToggleMaximize();
+
+    private void btnClose_Click(object? sender, EventArgs e) => Close();
+
+    private void TitleBar_MouseDown(object? sender, MouseEventArgs e)
+    {
+        if (e.Button != MouseButtons.Left || WindowState == FormWindowState.Maximized)
+        {
+            return;
+        }
+
+        ReleaseCapture();
+        SendMessage(Handle, WmNclButtonDown, (IntPtr)HtCaption, IntPtr.Zero);
+    }
+
+    private void TitleBar_DoubleClick(object? sender, EventArgs e) => ToggleMaximize();
+
+    private void HeaderPanel_Paint(object? sender, PaintEventArgs e)
+    {
+        using var accentPen = new Pen(UiTheme.GoldAccent, 2);
+        e.Graphics.DrawLine(accentPen, 0, headerPanel.Height - 1, headerPanel.Width, headerPanel.Height - 1);
     }
 
     private IntPtr KeyboardHookCallback(int code, IntPtr message, IntPtr data)
@@ -297,7 +599,9 @@ public partial class Form1 : Form
         UpdateSoundStatus();
         Log(settings.UseInteractMode
             ? "Ready. Interact mode is enabled; configure the cast key and catch sound for the selected WoW version."
-            : "Ready. Select the Classic client, record the catch sound, and capture the bobber red and blue feather pixels.");
+            : settings.IgnoreBobberPixelColors
+                ? "Ready. Select the Classic client, record the catch sound, and capture any three stable bobber pixels."
+                : "Ready. Select the Classic client, record the catch sound, and capture the bobber red and blue feather pixels.");
     }
 
     private void chkInteractMode_CheckedChanged(object? sender, EventArgs e)
@@ -356,7 +660,9 @@ public partial class Form1 : Form
 
         captureArmed = true;
         btnCalibrateBobberPattern.Text = "Press F8 over bobber";
-        lblBobberPatternInstructions.Text = "Move the cursor over the bobber in WoW, then press F8 to select its red and blue feather pixels.";
+        lblBobberPatternInstructions.Text = settings.IgnoreBobberPixelColors
+            ? "Move the cursor over the bobber in WoW, then press F8 to select any three stable pixels."
+            : "Move the cursor over the bobber in WoW, then press F8 to select its red and blue feather pixels.";
         SetStatus("Capture armed");
             Log("Bobber pattern calibration armed. Place the cursor over a clearly visible bobber and press F8.");
     }
@@ -387,7 +693,7 @@ public partial class Form1 : Form
             return;
         }
 
-        using (var calibration = new BobberCalibrationForm(screenshot, screenshotOrigin, point))
+        using (var calibration = new BobberCalibrationForm(screenshot, screenshotOrigin, point, settings.IgnoreBobberPixelColors))
         {
             if (calibration.ShowDialog(this) != DialogResult.OK)
             {
@@ -398,6 +704,7 @@ public partial class Form1 : Form
             }
 
             settings.BobberPixelSamples = calibration.SelectedPixels.ToList();
+            settings.IgnoreBobberPixelColors = calibration.IgnoreBobberPixelColors;
             settings.BobberClickOffsetX = calibration.ClickOffset.X;
             settings.BobberClickOffsetY = calibration.ClickOffset.Y;
         }
@@ -407,10 +714,11 @@ public partial class Form1 : Form
         settings.HasBobberPosition = true;
         settings.WindowHandle = window.Handle.ToInt64();
         btnCalibrateBobberPattern.Text = "Recalibrate pixel pattern (F8)";
-        lblBobberPatternStatus.Text = $"Pattern: {settings.BobberPixelSamples.Count} pixels, click offset ({settings.BobberClickOffsetX}, {settings.BobberClickOffsetY})";
+        var patternMode = settings.IgnoreBobberPixelColors ? "any-color" : "red/blue";
+        lblBobberPatternStatus.Text = $"Pattern: {settings.BobberPixelSamples.Count} pixels ({patternMode}), click offset ({settings.BobberClickOffsetX}, {settings.BobberClickOffsetY})";
         lblBobberPatternInstructions.Text = "Pixel pattern saved. The bot will tolerate bobber jiggle and small size changes when scanning after each cast.";
         SetStatus("Bobber pixel pattern saved");
-        Log($"Saved bobber pattern with {settings.BobberPixelSamples.Count} pixels and click offset ({settings.BobberClickOffsetX}, {settings.BobberClickOffsetY}).");
+        Log($"Saved {patternMode} bobber pattern with {settings.BobberPixelSamples.Count} pixels and click offset ({settings.BobberClickOffsetX}, {settings.BobberClickOffsetY}).");
         SaveCurrentSettings(false);
     }
 
@@ -966,7 +1274,9 @@ public partial class Form1 : Form
         {
             if (!settings.UseInteractMode && !settings.HasBobberPixelPattern)
             {
-                ShowValidation("Calibrate the bobber pixel pattern by selecting the red and blue feather pixels before starting the bot.");
+                ShowValidation(settings.IgnoreBobberPixelColors
+                    ? "Calibrate the bobber pixel pattern by selecting three stable pixels before starting the bot."
+                    : "Calibrate the bobber pixel pattern by selecting the red and blue feather pixels before starting the bot.");
                 return false;
             }
 
@@ -1005,7 +1315,8 @@ public partial class Form1 : Form
             : "Search area: full client";
         if (settings.HasBobberPixelPattern)
         {
-            lblBobberPatternStatus.Text = $"Pattern: {settings.BobberPixelSamples.Count} pixels, click offset ({settings.BobberClickOffsetX}, {settings.BobberClickOffsetY})";
+            var patternMode = settings.IgnoreBobberPixelColors ? "any-color" : "red/blue";
+            lblBobberPatternStatus.Text = $"Pattern: {settings.BobberPixelSamples.Count} pixels ({patternMode}), click offset ({settings.BobberClickOffsetX}, {settings.BobberClickOffsetY})";
         }
         else if (settings.HasBobberPosition)
         {
@@ -1095,7 +1406,7 @@ public partial class Form1 : Form
     {
         SetStatus("Needs attention", warning: true);
         Log(message);
-        MessageBox.Show(this, message, "WoW Fish Bot", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, message, ProjectIdentity.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void Log(string message)
@@ -1143,6 +1454,7 @@ public partial class Form1 : Form
             }
         }
 
+        SaveWindowLayout();
         SaveCurrentSettings(false);
     }
 
@@ -1166,6 +1478,12 @@ public partial class Form1 : Form
 
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool UnregisterHotKey(IntPtr handle, int id);
+
+    [DllImport("user32.dll")]
+    private static extern bool ReleaseCapture();
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SendMessage(IntPtr handle, int message, IntPtr wParam, IntPtr lParam);
 
 
 }

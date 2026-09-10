@@ -6,6 +6,13 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Authors>nanidev</Authors>
+    <Company>nanidev</Company>
+    <Product>WoW Fish Bot</Product>
+    <Description>WoW Fish Bot official project: https://github.com/nanidev/wowfishbot</Description>
+    <RepositoryUrl>https://github.com/nanidev/wowfishbot</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/nanidev/wowfishbot</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>

@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace wowfishbot;
 
 public sealed partial class AreaSelectionForm

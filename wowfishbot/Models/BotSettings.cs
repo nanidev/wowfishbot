@@ -41,6 +41,7 @@ public sealed class BotSettings
     [JsonIgnore]
     public int BobberReferenceBlue { get; set; }
     public List<BobberPixelSample> BobberPixelSamples { get; set; } = [];
+    public bool IgnoreBobberPixelColors { get; set; }
     public int BobberClickOffsetX { get; set; }
     public int BobberClickOffsetY { get; set; }
     public int BobberSearchTimeoutSeconds { get; set; } = 6;
@@ -51,6 +52,12 @@ public sealed class BotSettings
     public BobberSearchArea? BobberSearchArea { get; set; }
     public string? CatchSoundPath { get; set; }
     public long WindowHandle { get; set; }
+    public int WindowWidth { get; set; } = 929;
+    public int WindowHeight { get; set; } = 661;
+    public int WindowX { get; set; } = -1;
+    public int WindowY { get; set; } = -1;
+    public bool WindowMaximized { get; set; }
+    public bool LogCollapsed { get; set; }
 
     [JsonIgnore]
     public bool HasCatchSound => !string.IsNullOrWhiteSpace(CatchSoundPath) && File.Exists(CatchSoundPath);
