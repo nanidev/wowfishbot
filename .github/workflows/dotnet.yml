@@ -3,6 +3,7 @@ name: Build and publish
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -58,42 +59,10 @@ jobs:
           path: publish/win-x64
           if-no-files-found: error
 
-      - name: Ensure alpha release exists
-        if: github.event_name != 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            try {
-              await github.rest.repos.getReleaseByTag({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag: "alpha"
-              });
-            } catch (error) {
-              if (error.status === 404) {
-                try {
-                  await github.rest.repos.createRelease({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    tag_name: "alpha",
-                    target_commitish: context.sha,
-                    name: "Alpha",
-                    prerelease: true
-                  });
-                } catch (createError) {
-                  if (createError.status !== 422) {
-                    throw createError;
-                  }
-                }
-                return;
-              }
-              throw error;
-            }
-
       - name: Publish release asset
-        if: github.event_name != 'pull_request'
+        if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: alpha
-          name: Alpha
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           files: publish/wowfishbot-win-x64.zip
