@@ -48,6 +48,21 @@ jobs:
           path: publish/win-x64
           if-no-files-found: error
 
+      - name: Ensure alpha release exists
+        if: github.event_name != 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: "alpha"
+              });
+            } catch (error) {
+              core.setFailed("Required release tag 'alpha' does not exist. Create it manually first.");
+            }
+
       - name: Publish release asset
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v1
