@@ -1,5 +1,6 @@
 <div align="center">
 
+[![Watch the demo](https://img.youtube.com/vi/v=noEgzBqe_n8/maxresdefault.jpg)](https://www.youtube.com/watch?v=noEgzBqe_n8)
 # wowfishbot
 
 <p align="center">WoW Fish Bot is a configurable Windows desktop automation tool for World of Warcraft fishing. It combines sound-triggered catch detection, bobber recognition, and customizable timing controls to help streamline fishing in both classic and newer WoW versions. The app includes Interact With Target mode for modern clients, bobber pattern calibration, optional bobber validation, selectable search areas, pixel tolerance settings, custom cast and click inputs, and saved settings for repeat use. It also supports catch sound recording, built-in logs, optional UI hide/show hotkeys, and an emergency stop with ESC, making it a practical and easy-to-configure fishing assistant for players who want a reliable automated workflow.
