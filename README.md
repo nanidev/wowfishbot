@@ -1,6 +1,8 @@
 <div align="center">
+<a href="https://www.youtube.com/watch?v=noEgzBqe_n8" target="_blank" rel="noopener noreferrer">
+  Watch the video on YouTube
+</a>
 
-[Watch youtube video](https://www.youtube.com/watch?v=noEgzBqe_n8)
 
 # wowfishbot
 
