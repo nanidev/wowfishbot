@@ -1164,35 +1164,14 @@ public partial class Form1 : Form
                 continue;
             }
 
-            if (!bobberLocator.TryValidateAt(
-                    window.Handle,
-                    bobberPoint,
-                    bobberPixels,
-                    bobberClickOffset,
-                    settings.ValidateBobberPixel,
-                    28,
-                    settings.BobberColorTolerance,
-                    settings.BobberNeighborhoodRadius,
-                    settings.BobberMinimumMatchScorePercent,
-                    settings.BobberSearchArea,
-                    out var clickPoint,
-                    out bobberReason))
-            {
-                Log($"Catch detected, but bobber validation failed: {bobberReason}");
-                continue;
-            }
-
-            Log($"Bobber validation succeeded at ({clickPoint.X}, {clickPoint.Y}).");
-
-            SaveDetectedBobberPosition(clickPoint, bobberScore);
-            inputService.MoveCursor(clickPoint);
+            inputService.MoveCursor(bobberPoint);
             await Task.Delay(settings.ClickDelayMilliseconds, cancellationToken);
             if (!inputService.Click(settings.ClickButton))
             {
                 throw new InvalidOperationException("Windows rejected the bobber click input.");
             }
 
-            Log($"Catch sound detected with score {audioMatch.Score:0.00}. {settings.ClickButton} click sent at ({clickPoint.X}, {clickPoint.Y}).");
+            Log($"Catch sound detected with score {audioMatch.Score:0.00}. {settings.ClickButton} click sent at ({bobberPoint.X}, {bobberPoint.Y}).");
             await Task.Delay(settings.PerformanceDelayMilliseconds, cancellationToken);
         }
     }

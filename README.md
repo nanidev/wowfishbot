@@ -54,6 +54,16 @@
 
 ## 📝 Changelog
 
+### `v0.3.2` — Catch Click Reliability Fix
+
+This patch release simplifies the catch response after the bobber has already been detected.
+
+#### Fixes
+- Removed the redundant bobber pixel recapture and validation after the catch sound is matched.
+- The bot now clicks the coordinates saved during the initial bobber scan.
+- Preserved the initial bobber detection and its configured validation settings.
+- Kept Interact With Target mode behavior unchanged.
+
 ### `v0.3.1` — UI Frame and Form Polish
 
 This maintenance release refines the application window and secondary dialogs for a cleaner, more consistent appearance.

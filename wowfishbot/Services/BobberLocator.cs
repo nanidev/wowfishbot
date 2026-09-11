@@ -116,56 +116,6 @@ public sealed class BobberLocator
         }
     }
 
-    public bool TryValidateAt(
-        IntPtr windowHandle,
-        Point expectedPoint,
-        IReadOnlyList<BobberPixelSample> pixels,
-        Point clickOffset,
-        bool strict,
-        int radius,
-        int colorTolerance,
-        int neighborhoodRadius,
-        int minimumMatchScorePercent,
-        BobberSearchArea? searchArea,
-        out Point bobberPoint,
-        out string reason)
-    {
-        bobberPoint = expectedPoint;
-        reason = string.Empty;
-
-        if (!TryCaptureClientImage(windowHandle, out var bitmap, out var clientBounds, out reason))
-        {
-            return false;
-        }
-
-        using (bitmap)
-        {
-            var localPoint = new Point(expectedPoint.X - clientBounds.Left, expectedPoint.Y - clientBounds.Top);
-            var patternRadius = radius + pixels.Max(pixel => Math.Max(Math.Abs(pixel.OffsetX), Math.Abs(pixel.OffsetY)));
-            var anchorPoint = new Point(localPoint.X - clickOffset.X, localPoint.Y - clickOffset.Y);
-            var searchRegion = new Rectangle(anchorPoint.X - patternRadius, anchorPoint.Y - patternRadius, patternRadius * 2 + 1, patternRadius * 2 + 1);
-            var requestedRegion = ToClientRectangle(searchArea);
-            if (requestedRegion.HasValue)
-            {
-                searchRegion = Rectangle.Intersect(searchRegion, requestedRegion.Value);
-            }
-
-            var candidates = FindCandidates(bitmap, clientBounds, pixels, clickOffset, searchRegion, strict, colorTolerance, neighborhoodRadius, minimumMatchScorePercent);
-            var nearest = candidates
-                .OrderBy(candidate => DistanceSquared(candidate.ScreenPoint, expectedPoint))
-                .FirstOrDefault();
-
-            if (nearest is null || DistanceSquared(nearest.ScreenPoint, expectedPoint) > radius * radius)
-            {
-                reason = "The saved bobber pixel pattern was not visible near the last detection.";
-                return false;
-            }
-
-            bobberPoint = nearest.ScreenPoint;
-            return true;
-        }
-    }
-
     public bool TryCaptureClientImage(
         IntPtr windowHandle,
         out Bitmap bitmap,
@@ -407,13 +357,6 @@ public sealed class BobberLocator
     {
         var row = stride < 0 ? absoluteStride * (y + 1) - absoluteStride : y * absoluteStride;
         return row + x * 4;
-    }
-
-    private static int DistanceSquared(Point left, Point right)
-    {
-        var x = left.X - right.X;
-        var y = left.Y - right.Y;
-        return x * x + y * y;
     }
 
     private sealed record BobberCandidate(Point ScreenPoint, double Score);
